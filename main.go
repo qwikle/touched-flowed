@@ -1,7 +1,7 @@
 package main
 
 import "github.com/gin-gonic/gin"
-import "awesomeProject/infrastructures/framework/handlers"
+import "touchedFlowed/infrastructures/framework/handlers"
 import "github.com/joho/godotenv"
 
 func main() {
