@@ -16,7 +16,7 @@ type repository struct {
 }
 
 func (r repository) CreateUser(user *CreateUserRequest) (*User, error) {
-	row, err := r.db.Query("INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING id", user.FirstName, user.LastName, user.Email, user.Password)
+	row, err := r.db.Query("SELECT * FROM insert_user_json($1)", user.ToJson())
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (r repository) CreateUser(user *CreateUserRequest) (*User, error) {
 }
 
 func (r repository) GetUserByEmail(email string) (*User, error) {
-	result := r.db.QueryRow("SELECT id, first_name, last_name, email, password FROM users WHERE email = $1", email)
+	result := r.db.QueryRow("SELECT * FROM users WHERE email = $1", email)
 
 	var user User
 	err := result.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Password)
@@ -49,7 +49,7 @@ func (r repository) GetUserByEmail(email string) (*User, error) {
 }
 
 func (r repository) GetUserById(id uint64) (*User, error) {
-	result := r.db.QueryRow("SELECT id, first_name, last_name, email, password FROM users WHERE id = $1", id)
+	result := r.db.QueryRow("SELECT * FROM users WHERE id = $1", id)
 
 	var user User
 	err := result.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Password)
