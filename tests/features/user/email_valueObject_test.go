@@ -5,11 +5,11 @@ import (
 	"touchedFlowed/features/user"
 )
 
-func testEmail(t *testing.T) string {
-	email, err := user.ValidEmail("qwikle@gmail.com")
-	if err != nil {
-		t.Fatalf("Error: %s", err.Error())
-	}
-	return email
+func TestValidEmail(t *testing.T) {
+	want := "qwikle@gmail.com"
 
+	got, err := user.ValidEmail(want)
+	if err != nil {
+		t.Fatalf("ValidEmail(%q) = %q, want %q", want, got, want)
+	}
 }
