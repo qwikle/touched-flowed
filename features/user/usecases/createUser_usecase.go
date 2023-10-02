@@ -32,10 +32,8 @@ func (c createUserUseCase) Execute(request *requests.CreateUserRequest) (*respon
 	if err != nil {
 		return nil, err
 	}
-	response.Id = newUser.Id
-	response.FirstName = newUser.FirstName
-	response.LastName = newUser.LastName
-	response.Email = newUser.Email
+
+	response.FromEntity(newUser)
 
 	return &response, nil
 }
