@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"touchedFlowed/features/user/entities"
 	"touchedFlowed/features/user/repository"
 	"touchedFlowed/features/user/requests"
 	"touchedFlowed/features/user/responses"
@@ -13,6 +14,7 @@ type CreateUseCase interface {
 
 type createUserUseCase struct {
 	repository repository.Repository
+	hash       entities.PasswordHashes
 }
 
 func (c createUserUseCase) Execute(request *requests.CreateUserRequest) (*responses.CreateUserResponse, error) {
@@ -28,6 +30,11 @@ func (c createUserUseCase) Execute(request *requests.CreateUserRequest) (*respon
 		return nil, errors.New("email already exists")
 	}
 
+	user.Password, err = c.hash.Hash(user.Password)
+	if err != nil {
+		return nil, err
+	}
+
 	newUser, err := c.repository.CreateUser(user)
 	if err != nil {
 		return nil, err
@@ -38,8 +45,9 @@ func (c createUserUseCase) Execute(request *requests.CreateUserRequest) (*respon
 	return &response, nil
 }
 
-func NewCreateUserUseCase(r repository.Repository) CreateUseCase {
+func NewCreateUserUseCase(r repository.Repository, h entities.PasswordHashes) CreateUseCase {
 	return &createUserUseCase{
 		repository: r,
+		hash:       h,
 	}
 }
