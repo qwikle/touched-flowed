@@ -1,14 +1,14 @@
-package user
+package value_objects
 
 import (
 	"testing"
-	"touchedFlowed/features/user"
+	"touchedFlowed/features/user/value-objects"
 )
 
 func TestValidPassword(t *testing.T) {
 	want := "V€ry$tr0ngP@ssw0rd"
 
-	got, err := user.PasswordIsValid(want)
+	got, err := value_objects.PasswordIsValid(want)
 	if err != nil {
 		t.Fatalf("ValidPassword(%q) = %q, want %q", want, got, want)
 	}
@@ -17,7 +17,7 @@ func TestValidPassword(t *testing.T) {
 func TestInvalidPassword(t *testing.T) {
 	want := "weak"
 
-	_, err := user.PasswordIsValid(want)
+	_, err := value_objects.PasswordIsValid(want)
 	if err == nil {
 		t.Fatalf("ValidPassword(%q) = %q, want %q", want, err, want)
 	}
@@ -26,7 +26,7 @@ func TestInvalidPassword(t *testing.T) {
 func TestEmptyPassword(t *testing.T) {
 	want := ""
 
-	_, err := user.PasswordIsValid(want)
+	_, err := value_objects.PasswordIsValid(want)
 	if err == nil {
 		t.Fatalf("ValidPassword(%q) = %q, want %q", want, err, want)
 	}
