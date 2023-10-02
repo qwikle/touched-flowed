@@ -83,7 +83,7 @@ func (r pgUserRepository) UpdateUser(user *entities.User) (*entities.User, error
 	}, nil
 }
 
-func NewPgRepository(db utils.Database) repository.Repository {
+func NewPgUserRepository(db utils.Database) repository.Repository {
 	return &pgUserRepository{
 		db: db,
 	}
