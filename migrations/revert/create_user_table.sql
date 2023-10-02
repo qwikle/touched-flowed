@@ -2,6 +2,8 @@
 
 BEGIN;
 
+DROP FUNCTION "insert_user_json"(json);
+
 DROP TABLE "users";
 
 COMMIT;

@@ -10,4 +10,16 @@ CREATE TABLE "users" (
     "password" TEXT NOT NULL
     );
 
+
+CREATE FUNCTION "insert_user_json" (json JSON) RETURNS BIGINT AS $$
+DECLARE
+    "user_id" BIGINT;
+BEGIN
+    INSERT INTO "users" ("first_name", "last_name", "email", "password")
+    VALUES (json->>'first_name', json->>'last_name', json->>'email', json->>'password')
+    RETURNING "id" INTO "user_id";
+    RETURN "user_id";
+END;
+$$ LANGUAGE plpgsql;
+
 COMMIT;
