@@ -20,7 +20,7 @@ type database struct {
 }
 
 func connect() (*sql.DB, error) {
-	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	db, err := sql.Open(os.Getenv("DATABASE_TYPE"), os.Getenv("DATABASE_URL"))
 	if err != nil {
 		return nil, err
 	}
@@ -51,12 +51,17 @@ func (d database) QueryRowTx(tx *sql.Tx, query string, args ...interface{}) *sql
 	return tx.QueryRow(query, args...)
 }
 
+var DatabaseInstance Database
+
 func NewDatabase() Database {
-	db, err := connect()
-	if err != nil {
-		panic(err)
+	if DatabaseInstance == nil {
+		db, err := connect()
+		if err != nil {
+			panic(err)
+		}
+		DatabaseInstance = &database{
+			db: db,
+		}
 	}
-	return &database{
-		db: db,
-	}
+	return DatabaseInstance
 }
