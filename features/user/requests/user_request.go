@@ -1,4 +1,6 @@
-package user
+package requests
+
+import "touchedFlowed/features/user/value-objects"
 
 type CreateUserRequest struct {
 	FirstName         string `json:"first_name"`
@@ -17,32 +19,32 @@ func ValidCreateUserRequest(u *CreateUserRequest) (*CreateUserRequest, error) {
 	var err error
 	var request CreateUserRequest
 
-	request.FirstName, err = NameIsValid(u.FirstName, "first name")
+	request.FirstName, err = value_objects.NameIsValid(u.FirstName, "first name")
 	if err != nil {
 		return nil, err
 	}
 
-	request.LastName, err = NameIsValid(u.LastName, "last name")
+	request.LastName, err = value_objects.NameIsValid(u.LastName, "last name")
 	if err != nil {
 		return nil, err
 	}
 
-	request.Email, err = ValidEmail(u.Email)
+	request.Email, err = value_objects.ValidEmail(u.Email)
 	if err != nil {
 		return nil, err
 	}
 
-	request.EmailConfirmation, err = EmailIsConfirmed(u.Email, u.EmailConfirmation)
+	request.EmailConfirmation, err = value_objects.EmailIsConfirmed(u.Email, u.EmailConfirmation)
 	if err != nil {
 		return nil, err
 	}
 
-	request.Password, err = PasswordIsValid(u.Password)
+	request.Password, err = value_objects.PasswordIsValid(u.Password)
 	if err != nil {
 		return nil, err
 	}
 
-	request.PassConfirmation, err = PasswordIsConfirmed(u.Password, u.PassConfirmation)
+	request.PassConfirmation, err = value_objects.PasswordIsConfirmed(u.Password, u.PassConfirmation)
 	if err != nil {
 		return nil, err
 	}

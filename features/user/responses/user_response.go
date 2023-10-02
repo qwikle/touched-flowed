@@ -1,4 +1,4 @@
-package user
+package responses
 
 type CreateUserResponse struct {
 	Id        uint64 `json:"id"`
