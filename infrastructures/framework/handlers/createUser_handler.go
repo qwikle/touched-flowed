@@ -6,7 +6,8 @@ import (
 	"touchedFlowed/features/user/requests"
 	"touchedFlowed/features/user/usecases"
 	"touchedFlowed/features/utils"
-	"touchedFlowed/infrastructures/repositories"
+	"touchedFlowed/infrastructures/repositories/database"
+	"touchedFlowed/infrastructures/repositories/user"
 )
 
 func CreateUser(c *gin.Context) {
@@ -21,7 +22,7 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	response, err := usecases.NewCreateUserUseCase(repositories.NewPgUserRepository(utils.NewDatabase())).Execute(&newUser)
+	response, err := usecases.NewCreateUserUseCase(database.NewPgUserRepository(utils.NewDatabase()), user.NewBcryptPasswordHashes()).Execute(&newUser)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		return
