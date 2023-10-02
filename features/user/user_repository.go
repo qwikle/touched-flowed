@@ -1,7 +1,7 @@
 package user
 
 import (
-	"awesomeProject/features/utils"
+	"touchedFlowed/features/utils"
 )
 
 type Repository interface {

@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"awesomeProject/features/user"
-	"awesomeProject/features/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"touchedFlowed/features/user"
+	"touchedFlowed/features/utils"
 )
 
 func CreateUser(c *gin.Context) {
