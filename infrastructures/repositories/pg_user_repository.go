@@ -1,21 +1,27 @@
-package user
+package repositories
 
 import (
+	"touchedFlowed/features/user/entities"
+	"touchedFlowed/features/user/repository"
+	"touchedFlowed/features/user/requests"
 	"touchedFlowed/features/utils"
 )
 
-type Repository interface {
-	CreateUser(user *CreateUserRequest) (*User, error)
-	GetUserByEmail(email string) (*User, error)
-	GetUserById(id uint64) (*User, error)
-	updateUser(user *User) (*User, error)
+type pgUserRepository struct {
+	db             utils.Database
+	userRepository *repository.Repository
 }
 
-type repository struct {
-	db utils.Database
+func (r pgUserRepository) DeleteUser(id uint64) error {
+	_, err := r.db.Query(`DELETE FROM "users" WHERE id=$1`, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (r repository) CreateUser(user *CreateUserRequest) (*User, error) {
+func (r pgUserRepository) CreateUser(user *requests.CreateUserRequest) (*entities.User, error) {
 	row, err := r.db.Query("SELECT * FROM insert_user_json($1)", user.ToJson())
 	if err != nil {
 		return nil, err
@@ -28,7 +34,7 @@ func (r repository) CreateUser(user *CreateUserRequest) (*User, error) {
 		}
 	}
 
-	return &User{
+	return &entities.User{
 		Id:        id,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
@@ -37,10 +43,10 @@ func (r repository) CreateUser(user *CreateUserRequest) (*User, error) {
 	}, nil
 }
 
-func (r repository) GetUserByEmail(email string) (*User, error) {
+func (r pgUserRepository) GetUserByEmail(email string) (*entities.User, error) {
 	result := r.db.QueryRow("SELECT * FROM users WHERE email = $1", email)
 
-	var user User
+	var user entities.User
 	err := result.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Password)
 	if err != nil {
 		return nil, err
@@ -48,10 +54,10 @@ func (r repository) GetUserByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
-func (r repository) GetUserById(id uint64) (*User, error) {
+func (r pgUserRepository) GetUserById(id uint64) (*entities.User, error) {
 	result := r.db.QueryRow("SELECT * FROM users WHERE id = $1", id)
 
-	var user User
+	var user entities.User
 	err := result.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Password)
 	if err != nil {
 		return nil, err
@@ -59,7 +65,7 @@ func (r repository) GetUserById(id uint64) (*User, error) {
 	return &user, nil
 }
 
-func (r repository) updateUser(user *User) (*User, error) {
+func (r pgUserRepository) UpdateUser(user *entities.User) (*entities.User, error) {
 	exec, err := r.db.Exec("UPDATE users SET first_name = $1, last_name = $2, email = $3, password = $4 WHERE id = $5", user.FirstName, user.LastName, user.Email, user.Password, user.Id)
 	if err != nil {
 		return nil, err
@@ -68,7 +74,7 @@ func (r repository) updateUser(user *User) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &User{
+	return &entities.User{
 		Id:        uint64(id),
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
@@ -77,8 +83,8 @@ func (r repository) updateUser(user *User) (*User, error) {
 	}, nil
 }
 
-func NewRepository(db utils.Database) Repository {
-	return &repository{
+func NewPgRepository(db utils.Database) repository.Repository {
+	return &pgUserRepository{
 		db: db,
 	}
 }
