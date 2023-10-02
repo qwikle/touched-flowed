@@ -3,12 +3,14 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"touchedFlowed/features/user"
+	"touchedFlowed/features/user/requests"
+	"touchedFlowed/features/user/usecases"
 	"touchedFlowed/features/utils"
+	"touchedFlowed/infrastructures/repositories"
 )
 
 func CreateUser(c *gin.Context) {
-	var newUser user.CreateUserRequest
+	var newUser requests.CreateUserRequest
 
 	if c.Request.ContentLength == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Request body is empty"})
@@ -19,7 +21,7 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	response, err := user.NewCreateUserUseCase(user.NewRepository(utils.NewDatabase())).Execute(&newUser)
+	response, err := usecases.NewCreateUserUseCase(repositories.NewPgUserRepository(utils.NewDatabase())).Execute(&newUser)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		return
