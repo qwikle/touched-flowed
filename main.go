@@ -11,6 +11,7 @@ func main() {
 	}
 	r := gin.Default()
 	r.POST("/users", handlers.CreateUser)
+	r.POST("/users/login", handlers.SignInUser)
 	err := r.Run()
 	if err != nil {
 		return
