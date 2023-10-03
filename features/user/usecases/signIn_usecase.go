@@ -26,6 +26,7 @@ func (c signInUseCase) Execute(request *requests.SignInRequest) (*responses.Crea
 	}
 
 	newUser, _ := c.repository.GetUserByEmail(user.Email)
+
 	if newUser == nil {
 		return nil, errors.New("invalid email or password")
 	}
@@ -40,7 +41,7 @@ func (c signInUseCase) Execute(request *requests.SignInRequest) (*responses.Crea
 }
 
 func NewSignInUseCase(repository repository.Repository, hash entities.PasswordHashes) SignInUseCase {
-	return signInUseCase{
+	return &signInUseCase{
 		repository: repository,
 		hash:       hash,
 	}
