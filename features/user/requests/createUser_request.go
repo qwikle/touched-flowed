@@ -11,10 +11,6 @@ type CreateUserRequest struct {
 	PassConfirmation  string `json:"password_confirmation"`
 }
 
-func (u *CreateUserRequest) ToJson() string {
-	return `{"first_name": "` + u.FirstName + `", "last_name": "` + u.LastName + `", "email": "` + u.Email + `", "password": "` + u.Password + `"}`
-}
-
 func ValidCreateUserRequest(u *CreateUserRequest) (*CreateUserRequest, error) {
 	var err error
 	var request CreateUserRequest

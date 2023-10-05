@@ -2,10 +2,10 @@ package usecases
 
 import (
 	"errors"
-	"touchedFlowed/features/user/entities"
 	"touchedFlowed/features/user/repository"
 	"touchedFlowed/features/user/requests"
 	"touchedFlowed/features/user/responses"
+	"touchedFlowed/features/utils"
 )
 
 type CreateUseCase interface {
@@ -13,8 +13,8 @@ type CreateUseCase interface {
 }
 
 type createUserUseCase struct {
-	repository repository.Repository
-	hash       entities.PasswordHashes
+	repository repository.UserRepository
+	hash       utils.Hashes
 }
 
 func (c createUserUseCase) Execute(request *requests.CreateUserRequest) (*responses.CreateUserResponse, error) {
@@ -45,7 +45,7 @@ func (c createUserUseCase) Execute(request *requests.CreateUserRequest) (*respon
 	return &response, nil
 }
 
-func NewCreateUserUseCase(r repository.Repository, h entities.PasswordHashes) CreateUseCase {
+func NewCreateUserUseCase(r repository.UserRepository, h utils.Hashes) CreateUseCase {
 	return &createUserUseCase{
 		repository: r,
 		hash:       h,
