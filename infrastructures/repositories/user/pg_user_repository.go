@@ -9,7 +9,7 @@ import (
 
 type pgUserRepository struct {
 	db             utils.Database
-	userRepository *repository.Repository
+	userRepository *repository.UserRepository
 }
 
 func scanAndReturnUser(r utils.Rows) (*entities.User, error) {
@@ -48,7 +48,7 @@ func (r pgUserRepository) DeleteUser(id uint64) error {
 }
 
 func (r pgUserRepository) CreateUser(user *requests.CreateUserRequest) (*entities.User, error) {
-	row, err := r.db.Query("SELECT * FROM insert_user_json($1)", user.ToJson())
+	row, err := r.db.Query("SELECT * FROM insert_user_json($1)", user)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (r pgUserRepository) UpdateUser(user *entities.User) (*entities.User, error
 	return updatedUser, nil
 }
 
-func NewPgUserRepository(db utils.Database) repository.Repository {
+func NewPgUserRepository(db utils.Database) repository.UserRepository {
 	return &pgUserRepository{
 		db: db,
 	}

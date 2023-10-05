@@ -5,7 +5,7 @@ import (
 	"touchedFlowed/features/user/requests"
 )
 
-type Repository interface {
+type UserRepository interface {
 	CreateUser(user *requests.CreateUserRequest) (*entities.User, error)
 	GetUserByEmail(email string) (*entities.User, error)
 	GetUserById(id uint64) (*entities.User, error)
