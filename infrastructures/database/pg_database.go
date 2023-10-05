@@ -7,15 +7,15 @@ import (
 	"touchedFlowed/features/utils"
 )
 
-var Instance *pgx.Conn
+var PgInstance *pgx.Conn
 
-func connect() {
-	if Instance == nil {
+func PgConnection() {
+	if PgInstance == nil {
 		db, err := pgx.Connect(context.Background(), os.Getenv("DB_URL"))
 		if err != nil {
 			panic(err)
 		}
-		Instance = db
+		PgInstance = db
 	}
 }
 
@@ -28,6 +28,5 @@ func (d pgDatabase) Query(query string, args ...interface{}) (utils.Rows, error)
 }
 
 func NewPgDatabase() utils.Database {
-	connect()
-	return &pgDatabase{db: Instance}
+	return &pgDatabase{db: PgInstance}
 }
