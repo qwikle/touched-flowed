@@ -13,9 +13,14 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if c.Request.Header.Get("Authorization") == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token is empty or invalid"})
+			return
+		}
 		headerToken := strings.Split(c.Request.Header.Get("Authorization"), " ")[1]
 		if headerToken == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token is empty or invalid"})
+			return
 		}
 		db := database.NewPgDatabase()
 		userRepository := user.NewPgUserRepository(db)
