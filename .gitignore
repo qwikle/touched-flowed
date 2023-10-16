@@ -1,3 +1,4 @@
 .env
 sqitch.conf
 .idea
+bin/
