@@ -35,20 +35,27 @@ func (s *Socket) GetData(key string) interface{} {
 }
 
 func (s *Socket) Emit(event string, data string) {
-	message, err := eventToString(event, data)
+	message, err := stringify(event, data)
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	s.OutgoingMessage <- message
 }
 
 func (s *Socket) listenOutgoingMessage() {
-	for message := range s.OutgoingMessage {
-		err := s.conn.WriteMessage(websocket.TextMessage, []byte(message))
-		if err != nil {
-			fmt.Println(err)
-			s.Close()
-			return
+	for {
+		select {
+		case message, ok := <-s.OutgoingMessage:
+			if !ok {
+				return
+			}
+			err := s.conn.WriteMessage(websocket.TextMessage, []byte(message))
+			if err != nil {
+				fmt.Println(err)
+				s.Close()
+				return
+			}
 		}
 	}
 }
@@ -65,8 +72,8 @@ func (s *Socket) listenIncomingMessage() {
 			if err != nil {
 				return
 			}
-			if _, exists := s.events[socketMessage.Event]; exists {
-				s.events[socketMessage.Event].callback(socketMessage.Payload, s)
+			if event, exists := s.events[socketMessage.Event]; exists {
+				event.callback(socketMessage.Payload, s)
 			}
 		}
 	}
@@ -95,7 +102,7 @@ func (s *Socket) readMessage() {
 func (s *Socket) Listen() {
 	go s.listenOutgoingMessage()
 	go s.listenIncomingMessage()
-	s.readMessage()
+	go s.readMessage()
 }
 
 type SocketMessage struct {
@@ -112,7 +119,7 @@ func (s *Socket) Leave(room string) {
 }
 
 func (s *Socket) Broadcast(roomName string, event string, data string) {
-	message, err := eventToString(event, data)
+	message, err := stringify(event, data)
 	if err != nil {
 		return
 	}
@@ -140,6 +147,8 @@ func (s *Socket) Close() {
 }
 
 func (s *Socket) On(event string, callback SocketEventCallback) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	s.events[event] = SocketHandler{
 		event:    event,
 		callback: callback,
@@ -156,5 +165,4 @@ func NewSocket(conn *websocket.Conn, ip string) *Socket {
 		events:          make(map[string]SocketHandler),
 		Payload:         make(map[string]interface{}),
 	}
-
 }
