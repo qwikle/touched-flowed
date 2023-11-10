@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"touchedFlowed/infrastructures"
-	"touchedFlowed/infrastructures/framework/middlewares"
 )
 import "touchedFlowed/infrastructures/framework/handlers"
 import "github.com/joho/godotenv"
@@ -17,7 +16,7 @@ func main() {
 	r := gin.Default()
 	r.POST("/sign-up", handlers.CreateUser)
 	r.POST("/sign-in", handlers.SignInUser)
-	r.GET("/ws", middlewares.AuthMiddleware(), handlers.UpgradeToWS)
+	r.GET("/ws", handlers.UpgradeToWS)
 	//todo: Finish sign-out
 	//r.DELETE("/sign-out", middlewares.AuthMiddleware(), handlers.SignOutUser)
 	err := r.Run()
